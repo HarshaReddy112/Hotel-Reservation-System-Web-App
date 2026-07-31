@@ -2,216 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout - Hotel Booking</title>
   <style>
+    :root {
+      --bg: #f7f3ef;
+      --panel: #fffdfa;
+      --text: #222222;
+      --muted: #6f7282;
+      --accent: #ff5a5f;
+      --accent-2: #ff385c;
+      --border: #ece5de;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background-image: url('homepage.jpg');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #fff8f0 0%, #fefcf8 100%);
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: -1;
+    .checkout-card {
+      width: min(760px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
     }
 
-    .checkout-container {
-      background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
-      opacity: 0.8;
-      transition: opacity 0.3s ease-in-out;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      max-width: 600px;
-      width: 100%;
-      text-align: center;
-      margin-bottom: 40px;
+    h1 { margin: 0 0 10px; font-size: clamp(1.8rem, 3vw, 2.3rem); }
+    .subtext { color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+    .summary-list { display: grid; gap: 10px; margin-top: 12px; }
+    .summary-item {
+      display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px;
+      background: #fff5ee;
+      border: 1px solid var(--border);
     }
 
-    h1 {
-      margin-bottom: 30px;
-      font-size: 2em;
-      text-align: center;
-      color: #ffffff;
-    }
-
-    p {
-      font-size: 1.3em;
-      margin: 15px 0;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-    }
-
-    span {
-      color: #90caf9;
-    }
-
+    .summary-item strong { color: #ff5a5f; }
     button {
-      width: 100%;
-      padding: 15px;
-      background-color: #1e88e5;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-      margin-top: 30px;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      width: 100%; margin-top: 18px; border: none; border-radius: 12px; padding: 12px 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; cursor: pointer; font-weight: 700;
+      box-shadow: 0 8px 18px rgba(255,90,95,0.16);
     }
-
-    button:hover {
-      background-color: #1565c0;
-      transform: scale(1.03);
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .warning {
-      color: #ff5252;
-      font-size: 0.95em;
-      text-align: center;
-      margin-top: 20px;
-      display: none;
-    }
-
-    h2 {
-      margin-top: 40px;
-      margin-bottom: 15px;
-      color: #ffffff;
-    }
-
-    ul#reservation-list {
-      max-width: 600px;
-      width: 100%;
-      list-style-type: none;
-      padding: 0;
-      color: #ddd;
-    }
-
-    ul#reservation-list li {
-      background: #2a2a2a;
-      padding: 12px 20px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      font-size: 1.1em;
-    }
+    button:hover { transform: translateY(-1px); }
+    .warning { display: none; color: #c94b3d; margin-top: 10px; }
   </style>
 </head>
 <body>
+  <div class="checkout-card">
+    <h1>Booking summary</h1>
+    <p class="subtext">Your selected room is almost ready. Review the details and confirm your stay.</p>
 
-  <div class="checkout-container">
-    <h1>🧾 Booking Summary</h1>
-
-    <p><strong>Hotel:</strong> <span id="hotel">...</span></p>
-    <p><strong>Room Number:</strong> <span id="room">...</span></p>
-    <p><strong>Check-In:</strong> <span id="checkin">...</span></p>
-    <p><strong>Check-Out:</strong> <span id="checkout">...</span></p>
-    <p><strong>Total Price:</strong> <span id="price">...</span></p>
-
-    <button onclick="confirmBooking()">Confirm Booking</button>
-
-    <div id="warning" class="warning">
-      Some booking details are missing. Please complete the process.
+    <div class="summary-list">
+      <div class="summary-item"><strong>Hotel</strong><span id="hotel">...</span></div>
+      <div class="summary-item"><strong>Room</strong><span id="room">...</span></div>
+      <div class="summary-item"><strong>Check-in</strong><span id="checkin">...</span></div>
+      <div class="summary-item"><strong>Check-out</strong><span id="checkout">...</span></div>
+      <div class="summary-item"><strong>Offer</strong><span id="offerName">None</span></div>
+      <div class="summary-item"><strong>Discount</strong><span id="discount">₹0</span></div>
+      <div class="summary-item"><strong>Pre-tax total</strong><span id="preTax">...</span></div>
+      <div class="summary-item"><strong>Tax (18%)</strong><span id="taxAmount">...</span></div>
+      <div class="summary-item"><strong>Final total</strong><span id="price">...</span></div>
     </div>
+
+    <button onclick="confirmBooking()">Proceed to Payment</button>
+    <div id="warning" class="warning">Some booking details are missing. Please complete the process.</div>
   </div>
 
-
   <script>
-    const hotel = localStorage.getItem("selectedHotel");
-    const room = localStorage.getItem("selectedRoom");
-    const checkin = localStorage.getItem("checkinDate");
-    const checkout = localStorage.getItem("checkoutDate");
-    const price = localStorage.getItem("price");
-    const userID = localStorage.getItem("userID");
+    const hotel = localStorage.getItem('selectedHotel');
+    const room = localStorage.getItem('selectedRoom');
+    const checkin = localStorage.getItem('checkinDate');
+    const checkout = localStorage.getItem('checkoutDate');
+    const selectedOfferTitle = localStorage.getItem('selectedOfferTitle');
+    const offerDiscount = parseFloat(localStorage.getItem('selectedOfferDiscount')) || 0;
+    const userID = localStorage.getItem('userID');
 
-    // Display booking summary
-    document.getElementById("hotel").textContent = hotel || "N/A";
-    document.getElementById("room").textContent = room || "N/A";
-    document.getElementById("checkin").textContent = checkin || "N/A";
-    document.getElementById("checkout").textContent = checkout || "N/A";
-    document.getElementById("price").textContent = price ? "₹" + price : "N/A";
+    const selectedRoomNumber = room ? parseInt(room, 10) : null;
+    const roomPrice = localStorage.getItem('roomPrice') ? parseFloat(localStorage.getItem('roomPrice')) : null;
+    const priceFromStorage = localStorage.getItem('price');
 
-    function confirmBooking() {
-      if (!hotel || !room || !checkin || !checkout || !price) {
-        document.getElementById("warning").style.display = "block";
-        return;
-      }
-      document.getElementById("warning").style.display = "none";
+    document.getElementById('hotel').textContent = hotel || 'N/A';
+    document.getElementById('room').textContent = room || 'N/A';
+    document.getElementById('checkin').textContent = checkin || 'N/A';
+    document.getElementById('checkout').textContent = checkout || 'N/A';
+    document.getElementById('offerName').textContent = selectedOfferTitle || 'None';
+    document.getElementById('discount').textContent = offerDiscount > 0 ? `${Math.round(offerDiscount * 100)}% off` : 'None';
 
-      // Prepare booking data
-      const bookingData = {
-        hotel: hotel,
-        room_type: room,
-        check_in: checkin,
-        check_out: checkout,
-        price: price,
-		user_id: userID
-      };
+    if (checkin && checkout && selectedRoomNumber && priceFromStorage) {
+      const checkinDate = new Date(checkin);
+      const checkoutDate = new Date(checkout);
+      const numNights = Math.max(1, (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+      const baseRate = roomPrice || 0;
+      const baseTotal = baseRate * numNights;
+      const discounted = baseTotal * (1 - offerDiscount);
+      const taxAmount = discounted * 0.18;
+      const finalTotal = discounted + taxAmount;
 
-      // Send booking to Flask backend
-      fetch("http://localhost:5000/reserve", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookingData)
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.message || "Booking Confirmed!");
-        localStorage.clear();
-        window.location.href = "catalog.html";
-      })
-      .catch(err => {
-        alert("Error confirming booking. Please try again.");
-        console.error(err);
-      });
+      document.getElementById('preTax').textContent = discounted ? `₹${discounted.toFixed(2)}` : 'N/A';
+      document.getElementById('taxAmount').textContent = discounted ? `₹${taxAmount.toFixed(2)}` : 'N/A';
+      document.getElementById('price').textContent = finalTotal ? `₹${finalTotal.toFixed(2)}` : 'N/A';
+      localStorage.setItem('price', finalTotal.toFixed(2));
+    } else {
+      document.getElementById('preTax').textContent = 'N/A';
+      document.getElementById('taxAmount').textContent = 'N/A';
+      document.getElementById('price').textContent = priceFromStorage ? `₹${parseFloat(priceFromStorage).toFixed(2)}` : 'N/A';
     }
 
-    // Load all reservations from Flask backend
-   function loadReservations() {
-  /*fetch("http://localhost:5000/bookings")
-    .then(res => {
-      if (!res.ok) {
-        console.warn("Bookings API not available — skipping reservation history section.");
-        return null;
-      }
-      return res.json();
-    })
-    .then(data => {
-      if (!data) return; // prevent crash
-
-      const list = document.getElementById("reservation-list");
-      list.innerHTML = "";
-      if (data.length === 0) {
-        list.innerHTML = "<li>No reservations found.</li>";
+    function confirmBooking() {
+      if (!hotel || !room || !checkin || !checkout || !localStorage.getItem('price')) {
+        document.getElementById('warning').style.display = 'block';
         return;
       }
-      data.forEach(r => {
-        const item = document.createElement("li");
-        item.textContent = `${r.hotel} - ${r.room_type} from ${r.check_in} to ${r.check_out} (₹${r.price})`;
-        list.appendChild(item);
-      });
-    })
-    .catch(err => {
-      console.error("Failed to load reservations:", err);
-    });*/
-}
-
+      document.getElementById('warning').style.display = 'none';
+      window.location.href = '/payment.html';
+    }
   </script>
-
 </body>
 </html>
