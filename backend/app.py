@@ -10,8 +10,32 @@ import mysql.connector
 import pandas as pd
 import numpy as np
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)
+
+PAGE_TEMPLATES = {
+    "/": "index.html",
+    "/index": "index.html",
+    "/index.html": "index.html",
+    "/catalog": "catalog.html",
+    "/catalog.html": "catalog.html",
+    "/checkout": "checkout.html",
+    "/checkout.html": "checkout.html",
+    "/hotels": "Hotels-List.html",
+    "/hotels.html": "Hotels-List.html",
+    "/Hotels-List.html": "Hotels-List.html",
+    "/rooms": "Rooms_list.html",
+    "/rooms.html": "Rooms_list.html",
+    "/Rooms_list.html": "Rooms_list.html",
+    "/manager": "manager.html",
+    "/manager.html": "manager.html",
+    "/manager/catalog": "manager_catalog.html",
+    "/manager/catalog.html": "manager_catalog.html",
+    "/manager/catalog-2": "manager_catalog_2.html",
+    "/manager/catalog-2.html": "manager_catalog_2.html",
+    "/manager/dashboard": "manager_dashboard.html",
+    "/manager_dashboard.html": "manager_dashboard.html",
+}
 
 
 db = mysql.connector.connect(
@@ -204,6 +228,14 @@ def analytics_overview():
 @app.route("/manager/dashboard")
 def manager_dashboard_page():
     return render_template("manager_dashboard.html")
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def render_page(path):
+    template_name = PAGE_TEMPLATES.get("/" + path if path else "/")
+    if template_name:
+        return render_template(template_name)
+    return jsonify({"message": "Page not found"}), 404
 
 @app.route("/analytics/dashboard", methods=["GET"])
 def analytics_dashboard():
