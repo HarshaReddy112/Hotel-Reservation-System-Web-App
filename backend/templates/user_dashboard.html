@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(7, 17, 31, 0.84);
+      --text: #f7f4ef;
+      --muted: #c7d2e0;
+      --accent: #ffb84d;
+      --accent-2: #d65b5b;
+      --border: rgba(255,255,255,0.16);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(7,17,31,0.92), rgba(17,36,71,0.82)), url('/static/homepage.jpg') center/cover fixed;
+      padding: 24px;
+    }
+
+    .page-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero-card, .panel-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-card { padding: 24px; }
+    .hero-card h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 3vw, 2.4rem); }
+    .hero-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .actions { margin-top: 14px; }
+    .actions a, .actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .actions button.active {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .panel-card { padding: 20px; }
+    .panel-card h2 { margin: 0 0 12px; font-size: 1.15rem; }
+    .stat-list { display: grid; gap: 10px; }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .value { color: #ffd68c; font-weight: 600; }
+
+    .booking-list { display: grid; gap: 12px; }
+    .booking-item {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .booking-item h3 { margin: 0 0 8px; }
+    .booking-meta { color: var(--muted); display: grid; gap: 4px; font-size: 0.95rem; }
+    .empty-state {
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+    }
+    .status-text { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero-card">
+      <h1>My dashboard</h1>
+      <p>Review your profile, booking activity, and reservation history in one place.</p>
+      <div class="actions">
+        <a href="/catalog">Back to catalog</a>
+        <button type="button" id="tab-profile" onclick="setView('profile')">Profile</button>
+        <button type="button" id="tab-bookings" onclick="setView('bookings')">My Bookings</button>
+      </div>
+    </section>
+
+    <section class="profile-grid" id="profileSection">
+      <article class="panel-card">
+        <h2>User profile</h2>
+        <div id="profileContent" class="status-text">Loading your profile...</div>
+      </article>
+      <article class="panel-card">
+        <h2>Booking summary</h2>
+        <div id="summaryContent" class="status-text">Loading your booking summary...</div>
+      </article>
+    </section>
+
+    <section class="panel-card" id="bookingsSection" style="display: none;">
+      <h2>My bookings</h2>
+      <div id="bookingsContent"></div>
+    </section>
+  </div>
+
+  <script>
+    function setView(view) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('view', view);
+      const nextUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', nextUrl);
+      renderView(view);
+    }
+
+    function renderView(view) {
+      const profileSection = document.getElementById('profileSection');
+      const bookingsSection = document.getElementById('bookingsSection');
+      const profileTab = document.getElementById('tab-profile');
+      const bookingsTab = document.getElementById('tab-bookings');
+
+      const isBookings = view === 'bookings';
+      profileSection.style.display = isBookings ? 'none' : 'grid';
+      bookingsSection.style.display = isBookings ? 'block' : 'none';
+      profileTab.classList.toggle('active', !isBookings);
+      bookingsTab.classList.toggle('active', isBookings);
+    }
+
+    async function loadDashboard() {
+      const userId = localStorage.getItem('userID') || new URLSearchParams(window.location.search).get('user_id');
+      const profileContent = document.getElementById('profileContent');
+      const summaryContent = document.getElementById('summaryContent');
+      const bookingsContent = document.getElementById('bookingsContent');
+      const initialView = new URLSearchParams(window.location.search).get('view') === 'bookings' ? 'bookings' : 'profile';
+      renderView(initialView);
+
+      if (!userId) {
+        profileContent.innerHTML = '<div class="empty-state">Please log in first to view your dashboard.</div>';
+        summaryContent.innerHTML = '';
+        bookingsContent.innerHTML = '';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/dashboard-data?user_id=${encodeURIComponent(userId)}`);
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Unable to load dashboard');
+        }
+
+        const profile = data.profile || {};
+        profileContent.innerHTML = `
+          <div class="stat-list">
+            <div class="stat-row"><span>User ID</span><span class="value">${profile.userID || 'N/A'}</span></div>
+            <div class="stat-row"><span>Name</span><span class="value">${profile.name || 'N/A'}</span></div>
+            <div class="stat-row"><span>Account status</span><span class="value">Active</span></div>
+            <div class="stat-row"><span>Password</span><span class="value">${profile.passwordHint || '••••••••'}</span></div>
+          </div>
+        `;
+
+        summaryContent.innerHTML = `
+          <div class="stat-list">
+            <div class="stat-row"><span>Total bookings</span><span class="value">${profile.bookingsCount ?? 0}</span></div>
+            <div class="stat-row"><span>Recent activity</span><span class="value">${data.bookings?.length ? 'Available' : 'No bookings yet'}</span></div>
+            <div class="stat-row"><span>Membership</span><span class="value">Guest</span></div>
+          </div>
+        `;
+
+        if (!data.bookings || !data.bookings.length) {
+          bookingsContent.innerHTML = '<div class="empty-state">You do not have any bookings yet.</div>';
+          return;
+        }
+
+        bookingsContent.innerHTML = '<div class="booking-list"></div>';
+        const list = bookingsContent.querySelector('.booking-list');
+        data.bookings.forEach(booking => {
+          const bookingDate = booking.created_at ? new Date(booking.created_at).toLocaleDateString() : 'N/A';
+          const checkIn = booking.check_in ? new Date(booking.check_in).toLocaleDateString() : 'N/A';
+          const checkOut = booking.check_out ? new Date(booking.check_out).toLocaleDateString() : 'N/A';
+          const roomType = booking.room_type_name || `Room ${booking.room_number || 'N/A'}`;
+          const item = document.createElement('div');
+          item.className = 'booking-item';
+          item.innerHTML = `
+            <h3>${booking.hotel || 'Unknown hotel'}</h3>
+            <div class="booking-meta">
+              <span>Room: ${roomType}</span>
+              <span>Check-in: ${checkIn} • Check-out: ${checkOut}</span>
+              <span>Booked on: ${bookingDate}</span>
+              <span>Price: ₹${Number(booking.price || 0).toFixed(2)}</span>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      } catch (error) {
+        profileContent.innerHTML = `<div class="empty-state">${error.message}</div>`;
+        summaryContent.innerHTML = '';
+        bookingsContent.innerHTML = '';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDashboard);
+  </script>
+</body>
+</html>

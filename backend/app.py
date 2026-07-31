@@ -27,6 +27,10 @@ PAGE_TEMPLATES = {
     "/rooms": "Rooms_list.html",
     "/rooms.html": "Rooms_list.html",
     "/Rooms_list.html": "Rooms_list.html",
+    "/payment": "payment.html",
+    "/payment.html": "payment.html",
+    "/dashboard": "user_dashboard.html",
+    "/dashboard.html": "user_dashboard.html",
     "/manager": "manager.html",
     "/manager.html": "manager.html",
     "/manager/catalog": "manager_catalog.html",
@@ -45,6 +49,37 @@ db = mysql.connector.connect(
     database="hotel_db"
 )
 cursor = db.cursor(dictionary=True)
+
+offers_data = {
+    "summer_savings": {
+        "key": "summer_savings",
+        "title": "Summer savings",
+        "description": "Save up to 25% on stays booked this week. Enjoy late checkout and welcome refreshments.",
+        "room_ids": [102, 207, 115],
+        "discount": 0.20,
+        "hotel": "Grand Palace"
+    },
+    "family_package": {
+        "key": "family_package",
+        "title": "Family package",
+        "description": "Get free breakfast for kids, room upgrades, and a guided city tour with your reservation.",
+        "room_ids": [204, 111, 213],
+        "discount": 0.15,
+        "hotel": "Seaside Resort"
+    },
+    "off_season": {
+        "key": "off_season",
+        "title": "Off-season escape",
+        "description": "Book now for lower rates and complimentary spa credits at select resort properties.",
+        "room_ids": [208, 211, 216],
+        "discount": 0.25,
+        "hotel": "Breeze Retreat"
+    }
+}
+
+@app.route("/offers", methods=["GET"])
+def get_offers():
+    return jsonify(list(offers_data.values()))
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -137,6 +172,65 @@ def predict_peak_dates():
 
 
     return pred_df
+
+@app.route("/dashboard")
+def dashboard_page():
+    return render_template("user_dashboard.html")
+
+@app.route("/dashboard-data")
+def dashboard_data():
+    user_id = request.args.get("user_id", "").strip()
+    if not user_id:
+        return jsonify({"success": False, "message": "User ID required"}), 400
+
+    try:
+        user_id_int = int(user_id)
+    except ValueError:
+        return jsonify({"success": False, "message": "Invalid user ID"}), 400
+
+    cursor.execute(
+        """
+        SELECT userID, Name, no_of_bookings
+        FROM USERS
+        WHERE userID = %s
+        """,
+        (user_id_int,),
+    )
+    user_row = cursor.fetchone()
+    if not user_row:
+        return jsonify({"success": False, "message": "User not found"}), 404
+
+    cursor.execute(
+        """
+        SELECT
+            b.id,
+            b.hotel,
+            b.room_type AS room_number,
+            b.check_in,
+            b.check_out,
+            b.price,
+            b.created_at,
+            COALESCE(r.room_type, 'Unknown') AS room_type_name,
+            COALESCE(r.cost, 0) AS room_cost
+        FROM BOOKINGS b
+        LEFT JOIN ROOMS r ON r.room_no = b.room_type
+        WHERE b.user_id = %s
+        ORDER BY b.created_at DESC
+        """,
+        (user_id_int,),
+    )
+    bookings = cursor.fetchall()
+
+    return jsonify({
+        "success": True,
+        "profile": {
+            "userID": user_row["userID"],
+            "name": user_row["Name"],
+            "bookingsCount": user_row["no_of_bookings"],
+            "passwordHint": "••••••••"
+        },
+        "bookings": bookings,
+    })
 
 @app.route("/reserve", methods=["POST"])
 def reserve():

@@ -32,7 +32,7 @@
       gap: 18px;
     }
 
-    .hero-card, .hotel-card, .promo-banner, .carousel-card {
+    .hero-card, .hotel-card {
       background: var(--panel);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border);
@@ -42,6 +42,7 @@
 
     .hero-card {
       padding: 24px;
+      position: relative;
     }
 
     .hero-card h1 {
@@ -55,118 +56,63 @@
       line-height: 1.6;
     }
 
-    .promo-banner {
-      padding: 16px 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      color: #fff5df;
-    }
-
-    .promo-banner strong {
-      font-size: 1.02rem;
-    }
-
-    .promo-pill {
-      display: inline-block;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
-
-    .carousel-card {
-      padding: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .carousel-frame {
-      position: relative;
-      overflow: hidden;
-      border-radius: 18px;
-      min-height: 280px;
-    }
-
-    .carousel-slide {
+    .profile-menu {
       position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity 0.4s ease;
+      top: 20px;
+      right: 20px;
+      z-index: 3;
     }
 
-    .carousel-slide.active { opacity: 1; }
-
-    .carousel-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .slide-caption {
-      position: absolute;
-      left: 16px;
-      bottom: 16px;
-      background: rgba(0,0,0,0.6);
-      padding: 10px 12px;
-      border-radius: 12px;
-      max-width: 80%;
-    }
-
-    .slide-caption h3 {
-      margin: 0 0 4px;
-      font-size: 1rem;
-    }
-
-    .slide-caption p {
-      margin: 0;
-      color: #e7f0ff;
-      font-size: 0.9rem;
-    }
-
-    .carousel-controls {
+    .profile-trigger {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
-    }
-
-    .carousel-buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .carousel-buttons button {
-      margin-top: 0;
-      width: 38px;
-      height: 38px;
-      padding: 0;
+      border: 1px solid var(--border);
       border-radius: 999px;
-      font-size: 1rem;
-    }
-
-    .dots {
-      display: flex;
-      gap: 8px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-      border: none;
-      padding: 0;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 10px 6px 6px;
       cursor: pointer;
+      color: var(--text);
     }
 
-    .dot.active {
-      background: var(--accent);
+    .profile-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.22);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 190px;
+      background: rgba(7, 17, 31, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+    }
+
+    .profile-dropdown a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .profile-dropdown a:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .profile-menu.open .profile-dropdown {
+      display: block;
     }
 
     .hotel-grid {
@@ -179,7 +125,7 @@
       padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       transition: transform .2s ease;
     }
 
@@ -187,6 +133,127 @@
 
     .hotel-card h2 { margin: 0; font-size: 1.18rem; }
     .hotel-card p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #0b162a;
+      min-height: 210px;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .carousel-caption {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      color: white;
+      font-size: 0.95rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.45);
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .carousel-btn.prev { left: 10px; }
+    .carousel-btn.next { right: 10px; }
+
+    .slide-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .slide-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .slide-indicator.active {
+      background: var(--accent);
+      transform: scale(1.15);
+    }
+
+    .offers-banner {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .offers-banner h2 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .offer-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+      color: #f0f4ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 150px;
+    }
+
+    .offer-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .offer-card button {
+      margin-top: 14px;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+    }
+
+    .offer-card button:hover {
+      transform: translateY(-1px);
+    }
+
+    .offer-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,184,77,0.16);
+    }
 
     .features {
       display: flex;
@@ -218,72 +285,37 @@
 <body>
   <div class="page-shell">
     <section class="hero-card">
+      <div class="profile-menu" id="profileMenu">
+        <div class="profile-trigger" onclick="toggleProfileMenu()">
+          <img class="profile-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" alt="User profile" />
+          <span>My account</span>
+        </div>
+        <div class="profile-dropdown">
+          <a href="/dashboard?view=profile">Profile</a>
+          <a href="/dashboard?view=bookings">My Bookings</a>
+        </div>
+      </div>
       <h1>Find your ideal stay</h1>
       <p>Choose from a curated selection of luxury properties and move straight into your room selection experience.</p>
     </section>
 
-    <section class="promo-banner">
-      <strong>🌟 Off-season offer: save up to 30% on weekday stays and get complimentary breakfast.</strong>
-      <span class="promo-pill">Limited-time package</span>
-    </section>
-
-    <section class="carousel-card">
-      <div class="carousel-frame">
-        <div class="carousel-slide active">
-          <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80" alt="Luxury city stay" />
-          <div class="slide-caption">
-            <h3>Bangalore Small Palace</h3>
-            <p>Skyline views, premium suites, and a city escape package.</p>
-          </div>
+    <section class="offers-banner">
+      <h2>Special offers &amp; travel packages</h2>
+      <div class="offer-grid">
+        <div class="offer-card" id="offer-summer_savings">
+          <strong>Summer savings</strong>
+          <p>Save up to 25% on stays booked this week. Enjoy late checkout and welcome refreshments.</p>
+          <button type="button" onclick="applyOffer('summer_savings')">Book this offer</button>
         </div>
-        <div class="carousel-slide">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Seaside resort" />
-          <div class="slide-caption">
-            <h3>Pondi Seaside Resort</h3>
-            <p>Oceanfront retreats with spa access and weekend deals.</p>
-          </div>
+        <div class="offer-card" id="offer-family_package">
+          <strong>Family package</strong>
+          <p>Get free breakfast for kids, room upgrades, and a guided city tour with your reservation.</p>
+          <button type="button" onclick="applyOffer('family_package')">Book this offer</button>
         </div>
-        <div class="carousel-slide">
-          <img src="https://images.unsplash.com/photo-1468581264429-2548ef9eb732?auto=format&fit=crop&w=1200&q=80" alt="Mountain lodge" />
-          <div class="slide-caption">
-            <h3>TAJ Ooty</h3>
-            <p>Cool weather, cozy cabins, and monsoon getaway offers.</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80" alt="Heritage hotel" />
-          <div class="slide-caption">
-            <h3>Hyderabad Heritage Inn</h3>
-            <p>Classic charm paired with cultural dining and festive offers.</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80" alt="Beachfront retreat" />
-          <div class="slide-caption">
-            <h3>Goa Breeze Retreat</h3>
-            <p>Beachfront stays with sunset cruise perks and seasonal savings.</p>
-          </div>
-        </div>
-        <div class="carousel-slide">
-          <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80" alt="Snowy mountain resort" />
-          <div class="slide-caption">
-            <h3>Manali Snow Crest</h3>
-            <p>Snowy escapes with family packages and winter discounts.</p>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-controls">
-        <div class="dots" role="tablist" aria-label="Hotel gallery indicators">
-          <button class="dot active" data-index="0" aria-label="Show slide 1"></button>
-          <button class="dot" data-index="1" aria-label="Show slide 2"></button>
-          <button class="dot" data-index="2" aria-label="Show slide 3"></button>
-          <button class="dot" data-index="3" aria-label="Show slide 4"></button>
-          <button class="dot" data-index="4" aria-label="Show slide 5"></button>
-          <button class="dot" data-index="5" aria-label="Show slide 6"></button>
-        </div>
-        <div class="carousel-buttons">
-          <button type="button" class="carousel-prev" aria-label="Previous slide">←</button>
-          <button type="button" class="carousel-next" aria-label="Next slide">→</button>
+        <div class="offer-card" id="offer-off_season">
+          <strong>Off-season escape</strong>
+          <p>Book now for lower rates and complimentary spa credits at select resort properties.</p>
+          <button type="button" onclick="applyOffer('off_season')">Book this offer</button>
         </div>
       </div>
     </section>
@@ -291,6 +323,13 @@
     <section class="hotel-grid">
       <article class="hotel-card">
         <h2>Bangalore Small Palace</h2>
+        <div class="carousel" data-hotel-key="Grand Palace">
+          <img src="" alt="Bangalore Small Palace preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Experience luxury with skyline views and premium amenities.</p>
         <div class="features"><span>🏙 City View</span><span>🏌 Golf Field</span><span>🥐 Breakfast Included</span></div>
         <button onclick="selectHotel('Grand Palace')">Select Hotel</button>
@@ -298,6 +337,13 @@
 
       <article class="hotel-card">
         <h2>Pondi Seaside Resort</h2>
+        <div class="carousel" data-hotel-key="Seaside Resort">
+          <img src="" alt="Pondi Seaside Resort preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Relax with ocean breezes, spa treatments, and private beach access.</p>
         <div class="features"><span>🌊 Ocean View</span><span>🏊 Pool Access</span><span>💆 Complimentary Spa</span></div>
         <button onclick="selectHotel('Seaside Resort')">Select Hotel</button>
@@ -305,6 +351,13 @@
 
       <article class="hotel-card">
         <h2>TAJ Ooty</h2>
+        <div class="carousel" data-hotel-key="Mountain Lodge">
+          <img src="" alt="TAJ Ooty preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Cozy cabins in the heart of nature with fireplaces and hiking trails.</p>
         <div class="features"><span>🏔 Mountain View</span><span>🔥 Fireplace</span><span>🥾 Hiking Trails</span></div>
         <button onclick="selectHotel('Mountain Lodge')">Select Hotel</button>
@@ -312,6 +365,13 @@
 
       <article class="hotel-card">
         <h2>Hyderabad Heritage Inn</h2>
+        <div class="carousel" data-hotel-key="Heritage Inn">
+          <img src="" alt="Hyderabad Heritage Inn preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Stay amidst regal architecture with authentic Hyderabadi cuisine.</p>
         <div class="features"><span>🏰 Heritage Property</span><span>🍛 Traditional Cuisine</span><span>🎶 Cultural Evenings</span></div>
         <button onclick="selectHotel('Heritage Inn')">Select Hotel</button>
@@ -319,6 +379,13 @@
 
       <article class="hotel-card">
         <h2>Goa Breeze Retreat</h2>
+        <div class="carousel" data-hotel-key="Breeze Retreat">
+          <img src="" alt="Goa Breeze Retreat preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Chill near sandy beaches with cocktails and sunset cruises.</p>
         <div class="features"><span>🏖 Beachfront</span><span>🍹 Poolside Bar</span><span>🚤 Sunset Cruise</span></div>
         <button onclick="selectHotel('Breeze Retreat')">Select Hotel</button>
@@ -326,6 +393,13 @@
 
       <article class="hotel-card">
         <h2>Manali Snow Crest</h2>
+        <div class="carousel" data-hotel-key="Snow Crest">
+          <img src="" alt="Manali Snow Crest preview" />
+          <div class="carousel-caption">Loading images...</div>
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+        <div class="slide-indicators"></div>
         <p>Wake up to snowy peaks and warm hospitality in cozy lodges.</p>
         <div class="features"><span>❄ Snow View</span><span>🧣 Heated Rooms</span><span>⛷ Ski Equipment</span></div>
         <button onclick="selectHotel('Snow Crest')">Select Hotel</button>
@@ -334,27 +408,152 @@
   </div>
 
   <script>
+    const hotelSlides = {
+      'Grand Palace': [
+        { src: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80', label: 'City-view terrace and skyline' },
+        { src: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80', label: 'Luxury bedroom with elegant styling' },
+        { src: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80', label: 'Modern lounge and relaxing stay area' }
+      ],
+      'Seaside Resort': [
+        { src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', label: 'Oceanfront sunrise view' },
+        { src: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80', label: 'Spacious coastal suite' },
+        { src: 'https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=1200&q=80', label: 'Private beach lounge' }
+      ],
+      'Mountain Lodge': [
+        { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80', label: 'Hillside retreat surrounded by nature' },
+        { src: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80', label: 'Warm fireplace bedroom' },
+        { src: 'https://images.unsplash.com/photo-1501959915551-4e1c2304db70?auto=format&fit=crop&w=1200&q=80', label: 'Scenic outdoor walking trails' }
+      ],
+      'Heritage Inn': [
+        { src: 'https://images.unsplash.com/photo-1519821172141-b07e561972ac?auto=format&fit=crop&w=1200&q=80', label: 'Grand heritage lobby' },
+        { src: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1200&q=80', label: 'Regal suite with classic decor' },
+        { src: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1200&q=80', label: 'Authentic dining experience' }
+      ],
+      'Breeze Retreat': [
+        { src: 'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1200&q=80', label: 'Sunset beachside deck' },
+        { src: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80', label: 'Cool beachfront suite' },
+        { src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', label: 'Poolside bar and lounge' }
+      ],
+      'Snow Crest': [
+        { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80', label: 'Snowy high-altitude views' },
+        { src: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80', label: 'Cozy alpine rooms' },
+        { src: 'https://images.unsplash.com/photo-1519741499191-6d4f1b818b95?auto=format&fit=crop&w=1200&q=80', label: 'Warm lounge with mountain vistas' }
+      ]
+    };
+
+    function initializeCarousels() {
+      document.querySelectorAll('.carousel').forEach(carousel => {
+        const hotelKey = carousel.dataset.hotelKey;
+        const slides = hotelSlides[hotelKey] || [];
+        const img = carousel.querySelector('img');
+        const caption = carousel.querySelector('.carousel-caption');
+        const prevBtn = carousel.querySelector('.carousel-btn.prev');
+        const nextBtn = carousel.querySelector('.carousel-btn.next');
+        const indicators = carousel.nextElementSibling;
+        let currentIndex = 0;
+
+        if (!slides.length) {
+          img.src = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80';
+          caption.textContent = 'Beautiful retreat experience';
+          return;
+        }
+
+        function render() {
+          const slide = slides[currentIndex];
+          img.src = slide.src;
+          img.alt = slide.label;
+          caption.textContent = slide.label;
+          indicators.querySelectorAll('.slide-indicator').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+          });
+        }
+
+        slides.forEach((_, index) => {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'slide-indicator';
+          dot.addEventListener('click', () => {
+            currentIndex = index;
+            render();
+          });
+          indicators.appendChild(dot);
+        });
+
+        prevBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+          render();
+        });
+
+        nextBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex + 1) % slides.length;
+          render();
+        });
+
+        render();
+      });
+    }
+
+    const offerCatalog = {
+      summer_savings: {
+        key: 'summer_savings',
+        title: 'Summer savings',
+        description: 'Save up to 25% on stays booked this week. Enjoy late checkout and welcome refreshments.',
+        room_ids: [102, 207, 115],
+        discount: 0.20,
+        hotel: 'Grand Palace'
+      },
+      family_package: {
+        key: 'family_package',
+        title: 'Family package',
+        description: 'Get free breakfast for kids, room upgrades, and a guided city tour with your reservation.',
+        room_ids: [204, 111, 213],
+        discount: 0.15,
+        hotel: 'Seaside Resort'
+      },
+      off_season: {
+        key: 'off_season',
+        title: 'Off-season escape',
+        description: 'Book now for lower rates and complimentary spa credits at select resort properties.',
+        room_ids: [208, 211, 216],
+        discount: 0.25,
+        hotel: 'Breeze Retreat'
+      }
+    };
+
+    function applyOffer(offerKey) {
+      const offer = offerCatalog[offerKey];
+      if (!offer) return;
+      localStorage.setItem('selectedOfferKey', offer.key);
+      localStorage.setItem('selectedOfferTitle', offer.title);
+      localStorage.setItem('selectedOfferDiscount', offer.discount);
+      localStorage.setItem('selectedOfferHotel', offer.hotel);
+      localStorage.setItem('offerRoomIds', JSON.stringify(offer.room_ids));
+      window.location.href = '/Rooms_list.html';
+    }
+
     function selectHotel(hotelName) {
-      localStorage.removeItem('selectedHotel');
+      localStorage.removeItem('selectedOfferKey');
+      localStorage.removeItem('selectedOfferTitle');
+      localStorage.removeItem('selectedOfferDiscount');
+      localStorage.removeItem('selectedOfferHotel');
+      localStorage.removeItem('offerRoomIds');
       localStorage.setItem('selectedHotel', hotelName);
       window.location.href = '/Rooms_list.html';
     }
 
-    const slides = Array.from(document.querySelectorAll('.carousel-slide'));
-    const dots = Array.from(document.querySelectorAll('.dot'));
-    let currentSlide = 0;
-
-    function showSlide(index) {
-      currentSlide = (index + slides.length) % slides.length;
-      slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
-      dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+    function toggleProfileMenu() {
+      const menu = document.getElementById('profileMenu');
+      menu.classList.toggle('open');
     }
 
-    document.querySelector('.carousel-prev')?.addEventListener('click', () => showSlide(currentSlide - 1));
-    document.querySelector('.carousel-next')?.addEventListener('click', () => showSlide(currentSlide + 1));
-    dots.forEach(dot => dot.addEventListener('click', () => showSlide(Number(dot.dataset.index))));
+    document.addEventListener('click', function (event) {
+      const menu = document.getElementById('profileMenu');
+      if (!menu.contains(event.target)) {
+        menu.classList.remove('open');
+      }
+    });
 
-    setInterval(() => showSlide(currentSlide + 1), 5000);
+    document.addEventListener('DOMContentLoaded', initializeCarousels);
   </script>
 </body>
 </html>
