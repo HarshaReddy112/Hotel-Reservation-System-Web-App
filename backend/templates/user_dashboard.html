@@ -6,22 +6,23 @@
   <title>User Dashboard</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: rgba(7, 17, 31, 0.84);
-      --text: #f7f4ef;
-      --muted: #c7d2e0;
-      --accent: #ffb84d;
-      --accent-2: #d65b5b;
-      --border: rgba(255,255,255,0.16);
+      --bg: #f7f3ef;
+      --panel: #fffdfa;
+      --text: #222222;
+      --muted: #6f7282;
+      --accent: #ff5a5f;
+      --accent-2: #ff385c;
+      --border: #ece5de;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
-      background: linear-gradient(135deg, rgba(7,17,31,0.92), rgba(17,36,71,0.82)), url('/static/homepage.jpg') center/cover fixed;
+      background: linear-gradient(135deg, #fff8f0 0%, #fefcf8 100%);
       padding: 24px;
     }
 
@@ -36,14 +37,13 @@
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 24px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.25);
-      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
     }
 
-    .hero-card { padding: 24px; }
+    .hero-card { padding: 24px; background: linear-gradient(135deg, rgba(255,90,95,0.08), rgba(255,56,92,0.03)), var(--panel); }
     .hero-card h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 3vw, 2.4rem); }
     .hero-card p { margin: 0; color: var(--muted); line-height: 1.6; }
-    .actions { margin-top: 14px; }
+    .actions { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
     .actions a, .actions button {
       display: inline-flex;
       align-items: center;
@@ -56,12 +56,12 @@
       text-decoration: none;
       font-weight: 700;
       cursor: pointer;
-      margin-right: 10px;
     }
 
     .actions button.active {
-      background: rgba(255,255,255,0.16);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #fff5ee;
+      border: 1px solid var(--border);
+      color: var(--text);
     }
 
     .profile-grid {
@@ -78,25 +78,26 @@
       justify-content: space-between;
       gap: 12px;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(15,23,42,0.06);
     }
     .stat-row:last-child { border-bottom: none; }
-    .value { color: #ffd68c; font-weight: 600; }
+    .value { color: #ff5a5f; font-weight: 600; }
 
     .booking-list { display: grid; gap: 12px; }
     .booking-item {
       padding: 14px;
       border-radius: 16px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #fff5ee;
+      border: 1px solid var(--border);
     }
     .booking-item h3 { margin: 0 0 8px; }
     .booking-meta { color: var(--muted); display: grid; gap: 4px; font-size: 0.95rem; }
     .empty-state {
       padding: 18px;
       border-radius: 16px;
-      background: rgba(255,255,255,0.06);
+      background: #fff5ee;
       color: var(--muted);
+      border: 1px solid var(--border);
     }
     .status-text { color: var(--muted); }
   </style>

@@ -6,27 +6,28 @@
   <title>Hotel Catalog</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: rgba(7, 17, 31, 0.84);
-      --text: #f7f4ef;
-      --muted: #c7d2e0;
-      --accent: #ffb84d;
-      --accent-2: #d65b5b;
-      --border: rgba(255,255,255,0.16);
+      --bg: #f7f3ef;
+      --panel: #fffdfa;
+      --text: #222222;
+      --muted: #6f7282;
+      --accent: #ff5a5f;
+      --accent-2: #ff385c;
+      --border: #ece5de;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
-      background: linear-gradient(135deg, rgba(7,17,31,0.9), rgba(17,36,71,0.82)), url('/static/homepage.jpg') center/cover fixed;
+      background: linear-gradient(135deg, #fff8f0 0%, #fefcf8 100%);
       padding: 24px;
     }
 
     .page-shell {
-      max-width: 1100px;
+      max-width: 1280px;
       margin: 0 auto;
       display: grid;
       gap: 18px;
@@ -34,32 +35,52 @@
 
     .hero-card, .hotel-card {
       background: var(--panel);
-      backdrop-filter: blur(12px);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
     }
 
     .hero-card {
-      padding: 24px;
+      padding: 28px;
       position: relative;
+      background: linear-gradient(135deg, rgba(255,90,95,0.08), rgba(255,56,92,0.03)), var(--panel);
     }
 
     .hero-card h1 {
       margin: 0 0 8px;
       font-size: clamp(1.8rem, 3vw, 2.4rem);
+      line-height: 1.1;
     }
 
     .hero-card p {
       margin: 0;
       color: var(--muted);
       line-height: 1.6;
+      max-width: 760px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .hero-badges span {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 90, 95, 0.08);
+      color: #ff5a5f;
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
     .profile-menu {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 24px;
+      right: 24px;
       z-index: 3;
     }
 
@@ -69,10 +90,12 @@
       gap: 10px;
       border: 1px solid var(--border);
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      padding: 6px 10px 6px 6px;
+      background: rgba(255,255,255,0.9);
+      padding: 8px 12px;
       cursor: pointer;
       color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.06);
     }
 
     .profile-avatar {
@@ -81,7 +104,7 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid rgba(255,255,255,0.22);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
     }
 
@@ -91,11 +114,11 @@
       top: calc(100% + 8px);
       right: 0;
       min-width: 190px;
-      background: rgba(7, 17, 31, 0.96);
+      background: #fffdfa;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 8px;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.08);
     }
 
     .profile-dropdown a {
@@ -108,7 +131,7 @@
     }
 
     .profile-dropdown a:hover {
-      background: rgba(255,255,255,0.08);
+      background: #fff5ee;
     }
 
     .profile-menu.open .profile-dropdown {
@@ -117,8 +140,8 @@
 
     .hotel-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
 
     .hotel-card {
@@ -127,6 +150,7 @@
       flex-direction: column;
       gap: 12px;
       transition: transform .2s ease;
+      box-shadow: 0 14px 28px rgba(15,23,42,0.06);
     }
 
     .hotel-card:hover { transform: translateY(-3px); }
@@ -137,8 +161,8 @@
     .carousel {
       position: relative;
       overflow: hidden;
-      border-radius: 18px;
-      background: #0b162a;
+      border-radius: 20px;
+      background: #f4efe9;
       min-height: 210px;
     }
 
@@ -166,12 +190,13 @@
       height: 34px;
       border-radius: 50%;
       border: none;
-      background: rgba(0,0,0,0.45);
-      color: white;
+      background: rgba(255,255,255,0.9);
+      color: #222;
       font-size: 1.3rem;
       cursor: pointer;
       display: grid;
       place-items: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
     }
 
     .carousel-btn.prev { left: 10px; }
@@ -188,9 +213,12 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.35);
+      background: #d7cec3;
       cursor: pointer;
       transition: transform .2s ease, background .2s ease;
+      padding: 0;
+      margin: 0;
+      border: none;
     }
 
     .slide-indicator.active {
@@ -201,38 +229,41 @@
     .offers-banner {
       display: grid;
       gap: 14px;
-      padding: 20px;
-      border-radius: 24px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
+      padding: 24px;
+      border-radius: 28px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
     }
 
     .offers-banner h2 {
       margin: 0 0 8px;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
     }
 
     .offer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
     }
 
     .offer-card {
-      background: rgba(255,255,255,0.08);
-      border-radius: 18px;
+      background: linear-gradient(145deg, #fffdfa, #fef6ee);
+      border: 1px solid var(--border);
+      border-radius: 20px;
       padding: 16px;
-      color: #f0f4ff;
+      color: var(--text);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       min-height: 150px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.05);
     }
 
     .offer-card strong {
       display: block;
       margin-bottom: 8px;
-      color: #fff;
+      color: #ff5a5f;
     }
 
     .offer-card button {
@@ -244,6 +275,7 @@
       cursor: pointer;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: white;
+      box-shadow: 0 8px 18px rgba(255,90,95,0.18);
     }
 
     .offer-card button:hover {
@@ -252,7 +284,7 @@
 
     .offer-card.active {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255,184,77,0.16);
+      box-shadow: 0 0 0 2px rgba(255,90,95,0.12);
     }
 
     .features {
@@ -266,8 +298,9 @@
       font-size: 0.82rem;
       padding: 6px 8px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      color: #e8f1ff;
+      background: #fff5ee;
+      color: #5d5563;
+      border: 1px solid var(--border);
     }
 
     button {
@@ -279,6 +312,12 @@
       color: white;
       font-weight: 700;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(255,90,95,0.16);
     }
   </style>
 </head>
@@ -294,6 +333,11 @@
           <a href="/dashboard?view=profile">Profile</a>
           <a href="/dashboard?view=bookings">My Bookings</a>
         </div>
+      </div>
+      <div class="hero-badges">
+        <span>🏡 Handpicked stays</span>
+        <span>✨ Flexible booking</span>
+        <span>🌴 Travel-ready picks</span>
       </div>
       <h1>Find your ideal stay</h1>
       <p>Choose from a curated selection of luxury properties and move straight into your room selection experience.</p>

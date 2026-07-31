@@ -2,418 +2,637 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Hotel Room Selection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxury Hotel Rooms</title>
   <style>
+    :root {
+      --bg: #f7f3ef;
+      --panel: #fffdfa;
+      --panel-2: #fff5ee;
+      --text: #222222;
+      --muted: #6f7282;
+      --accent: #ff5a5f;
+      --accent-2: #ff385c;
+      --success: #3dcf8e;
+      --border: #ece5de;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-	   margin: 0;
-	   background-image: url('homepage.jpg');
-	   background-size: cover;
-       background-position: center;
-       background-attachment: fixed;
-       color: #f0f0f0;
-       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-       padding: 20px;
-	}
-	
-	body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.75); /* Light opacity (25%) */
-  z-index: -1;
-   }
-
-    h1 {
-      text-align: center;
-      color: #ffffff;
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #fff8f0 0%, #fefcf8 100%);
+      min-height: 100vh;
     }
 
-    input, button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px 15px;
-      font-size: 16px;
-      background: #1e1e1e;
-      color: #fff;
-      border: 1px solid #444;
-      border-radius: 6px;
+    .page-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
     }
 
-    button {
-      background: #3a3a3a;
-      cursor: pointer;
-      transition: transform 0.2s;
+    .hero-card, .search-card, .room-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
     }
 
-    button:hover {
-      transform: scale(1.05);
-      background: #5c5c5c;
-    }
-
-    .floor-tabs {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .floor-tabs button.active {
-      background: #611d2d;
-    }
-
-    .floor {
-      display: none;
-      grid-template-columns: 100px 40px 100px;
-      grid-template-rows: repeat(4, auto);
-      column-gap: 30px;
-      row-gap: 15px;
-      justify-content: center;
-      padding: 20px;
-      background: #1e1e1e;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    .floor.active {
+    .hero-card {
+      padding: 28px;
       display: grid;
+      gap: 18px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(255,90,95,0.08), rgba(255,56,92,0.03)), var(--panel);
     }
 
-    .roomBox {
-      background: linear-gradient(145deg, #1b1b1b, #262626);
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 10px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    .hero-card h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      line-height: 1.1;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 700px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-badges span {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,90,95,0.08);
+      color: #ff5a5f;
+      font-size: 0.92rem;
+      border: 1px solid rgba(255,90,95,0.12);
+      font-weight: 600;
+    }
+
+    .search-card {
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .search-grid label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .search-grid input, .search-grid button, .chip-btn {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .search-grid button, .chip-btn {
       cursor: pointer;
-      transform: perspective(500px) rotateY(0deg);
-      transition: all 0.3s ease;
-      color: #e0e0e0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .roomBox:hover {
-      transform: perspective(500px) rotateY(5deg) scale(1.05);
+    .search-grid button:hover, .chip-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.08);
     }
 
-    .roomBox.standard { height: 100px; }
-    .roomBox.deluxe { height: 100px; }
-    .roomBox.suite { height: 120px; }
-
-
-    .roomBox.selected {
-      border: 2px solid #ebd8d8;
-      box-shadow: 0 0 10px #40f2ff;
-	  background: #611d2d;
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 18px;
     }
-	.roomBox.booked {
-  background-color: #555 !important;
-  color: #999 !important;
-  cursor: not-allowed;
-  pointer-events: none;
-  box-shadow: none !important;
-  transform: none !important;
-}
 
-	
-
-    .hallway {
-      background: #611d2d;
-      writing-mode: vertical-rl;
-      text-align: center;
-      padding: 5px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #aaa;
-      border: 1px dashed #555;
-      grid-column: 2;
-      grid-row: 1 / span 4;
-      border-radius: 6px;
+    .chip-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border-color: transparent;
     }
-	.floor {
-  opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
-}
 
-.floor.inactive {
-  opacity: 0.4;
-}
-.floor {
-  background-color: rgba(255, 255, 255, 0.1); /* light transparent white */
-  backdrop-filter: blur(8px); /* adds blur behind */
-  border-radius: 10px;
-  padding: 10px;
-  opacity: 0.9;
-}
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
 
-	
+    .room-card {
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 28px rgba(15,23,42,0.06);
+    }
+
+    .room-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(15,23,42,0.12);
+    }
+
+    .room-image {
+      height: 170px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 14px;
+    }
+
+    .room-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.45));
+    }
+
+    .room-image span, .room-image strong {
+      position: relative;
+      z-index: 1;
+    }
+
+    .room-image .type-pill {
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      backdrop-filter: blur(6px);
+      color: white;
+    }
+
+    .room-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .room-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .room-title-row h3 { margin: 0; font-size: 1.1rem; }
+
+    .room-price { font-weight: 700; color: var(--accent); }
+
+    .room-meta { color: var(--muted); font-size: 0.95rem; }
+
+    .room-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .room-features span {
+      font-size: 0.82rem;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: #fff5ee;
+      color: #5d5563;
+      border: 1px solid var(--border);
+    }
+
+    .room-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .select-btn, .ghost-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .select-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 8px 18px rgba(255,90,95,0.16);
+    }
+
+    .ghost-btn {
+      background: #fff5ee;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .room-card.selected {
+      outline: 2px solid var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,90,95,0.12);
+    }
+
+    .room-card.booked {
+      opacity: 0.6;
+      filter: grayscale(0.2);
+    }
+
+    .room-card.booked .select-btn {
+      cursor: not-allowed;
+      background: #666;
+      color: #ddd;
+      box-shadow: none;
+    }
+
+    .summary-card {
+      margin-top: 18px;
+      padding: 16px 18px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.05);
+    }
+
+    #surge-warning {
+      display: none;
+      margin-top: 10px;
+      color: #c07b00;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .page-shell { padding: 16px 12px 24px; }
+      .hero-card, .search-card { padding: 16px; }
+      .room-grid { max-height: none; overflow: visible; }
+    }
   </style>
 </head>
 <body>
+  <div class="page-shell">
+    <section class="hero-card">
+      <div class="hero-badges">
+        <span>🌴 Oceanfront luxury</span>
+        <span>🛏 Premium comfort</span>
+        <span>✨ Flexible booking</span>
+      </div>
+      <div id="activeOfferCard" style="display:none; margin-top:-8px; margin-bottom:16px; padding:16px; border-radius:18px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);">
+        <strong id="activeOfferTitle" style="display:block; color:#fff; margin-bottom:8px;"></strong>
+        <p id="activeOfferDescription" style="margin:0;color:var(--muted);"></p>
+        <button class="ghost-btn" style="margin-top:12px;" onclick="clearOffer()">Clear offer</button>
+      </div>
+      <h1>Choose a room that feels like your perfect stay</h1>
+      <p>Pick your dates, browse thoughtfully designed rooms with real amenities, and move seamlessly to checkout. Our curated rooms make it easy to compare comfort, features, and value.</p>
+    </section>
 
-  <h1>Choose Your Date & Room</h1>
+    <section class="search-card">
+      <div class="search-grid">
+        <label>
+          Check-in
+          <input type="date" id="checkin">
+        </label>
+        <label>
+          Check-out
+          <input type="date" id="checkout">
+        </label>
+        <button onclick="showRooms()">Show Available Rooms</button>
+      </div>
 
-  <input type="date" id="checkin">
-  <input type="date" id="checkout">
-  <button onclick="showRooms()">Show Rooms</button>
-  <div class="floor-tabs">
-    <button onclick="switchFloor(1)" class="active">Floor 1</button>
-    <button onclick="switchFloor(2)">Floor 2</button>
+      <div class="chip-row">
+        <button class="chip-btn active" onclick="setFilter('All')">All Rooms</button>
+        <button class="chip-btn" onclick="setFilter('Standard')">Standard</button>
+        <button class="chip-btn" onclick="setFilter('Deluxe')">Deluxe</button>
+        <button class="chip-btn" onclick="setFilter('Suite')">Suite</button>
+      </div>
+    </section>
+
+    <div id="roomGrid" class="room-grid"></div>
+
+    <div class="summary-card">
+      <div>
+        <strong id="selectionLabel">No room selected yet</strong>
+        <div id="selectionSubtext" style="color: var(--muted); margin-top: 4px;">Choose a room to continue your booking.</div>
+      </div>
+      <button class="select-btn" onclick="confirmRoom()">Continue to Checkout</button>
+    </div>
+
+    <p id="surge-warning"></p>
+    <button id="proceedBtn" class="ghost-btn" style="display:none; margin-top:10px;" onclick="goToCheckout()">Proceed to Payment</button>
   </div>
 
-  <div id="floor1" class="floor active"></div>
-  <div id="floor2" class="floor"></div>
+  <script>
+    let surgeTable = {};
+    let surgeLoaded = false;
+    let selectedRoom = null;
+    let activeFilter = 'All';
+    let activeOffer = null;
 
-  <button onclick="confirmRoom()">Continue to Checkout</button>
-  
-  <p id="surge-warning" style="
-  text-align:center;
-  font-size: 1.1em;
-  margin-top: 10px;
-  font-weight: bold;
-  display: none;
-  color: #ffcc00;
-"></p>
-<button id="proceedBtn" style="display:none; margin-top:10px;" onclick="goToCheckout()">
-  Proceed to Payment
-</button>
-
-
-
-
- <script>
- let surgeTable = {};
- let surgeLoaded = false;
-
-
-fetch("http://localhost:5000/pricing/prediction")
-  .then(res => res.json())
-  .then(data => {
-    data.forEach(item => {
-      surgeTable[item.date] = item.price_multiplier;
-    });
-    surgeLoaded = true;   // surge pricing ready to use
-  });
-
- 
-const rooms = [
-// Floor 1 rooms
-  { number: 101, type: "Standard", features: "Fan", booked: false, floor: 1, price: 1200 },
-  { number: 102, type: "Standard", features: "Wi-Fi", booked: false, floor: 1, price: 1300 },
-  { number: 103, type: "Standard", features: "Desk", booked: false, floor: 1, price: 1250 },
-  { number: 104, type: "Deluxe", features: "AC", booked: false, floor: 1, price: 2000 },
-  { number: 105, type: "Deluxe", features: "TV", booked: false, floor: 1, price: 2100 },
-  { number: 106, type: "Suite", features: "Mini-Fridge", booked: false, floor: 1, price: 3000 },
-  { number: 107, type: "Suite", features: "Ocean View", booked: false, floor: 1, price: 3500 },
-  { number: 108, type: "Standard", features: "Desk", booked: false, floor: 1, price: 1350 },
-  { number: 109, type: "Standard", features: "Fan", booked: false, floor: 1, price: 1250 },
-  { number: 110, type: "Standard", features: "Wi-Fi", booked: false, floor: 1, price: 1400 },
-  { number: 111, type: "Deluxe", features: "Balcony", booked: false, floor: 1, price: 2200 },
-  { number: 112, type: "Deluxe", features: "TV", booked: false, floor: 1, price: 2150 },
-  { number: 113, type: "Suite", features: "Lounge", booked: false, floor: 1, price: 3200 },
-  { number: 114, type: "Suite", features: "2 Beds", booked: false, floor: 1, price: 3300 },
-  { number: 115, type: "Standard", features: "Desk", booked: false, floor: 1, price: 1450 },
-  { number: 116, type: "Deluxe", features: "Mini-Bar", booked: false, floor: 1, price: 2250 },
-
-  // Floor 2 rooms
-  { number: 201, type: "Standard", features: "Fan", booked: false, floor: 2, price: 1250 },
-  { number: 202, type: "Standard", features: "Wi-Fi", booked: false, floor: 2, price: 1300 },
-  { number: 203, type: "Standard", features: "Desk", booked: false, floor: 2, price: 1350 },
-  { number: 204, type: "Deluxe", features: "Balcony", booked: false, floor: 2, price: 2200 },
-  { number: 205, type: "Deluxe", features: "TV", booked: false, floor: 2, price: 2150 },
-  { number: 206, type: "Suite", features: "Lounge", booked: false, floor: 2, price: 3200 },
-  { number: 207, type: "Suite", features: "2 Beds", booked: false, floor: 2, price: 3300 },
-  { number: 208, type: "Standard", features: "Fan", booked: false, floor: 2, price: 1260 },
-  { number: 209, type: "Standard", features: "Wi-Fi", booked: false, floor: 2, price: 1310 },
-  { number: 210, type: "Deluxe", features: "Balcony", booked: false, floor: 2, price: 2250 },
-  { number: 211, type: "Suite", features: "Ocean View", booked: false, floor: 2, price: 3400 },
-  { number: 212, type: "Standard", features: "Desk", booked: false, floor: 2, price: 1360 },
-  { number: 213, type: "Deluxe", features: "TV", booked: false, floor: 2, price: 2180 },
-  { number: 214, type: "Standard", features: "Wi-Fi", booked: false, floor: 2, price: 1290 },
-  { number: 215, type: "Suite", features: "Lounge", booked: false, floor: 2, price: 3250 },
-  { number: 216, type: "Suite", features: "Mini-Fridge", booked: false, floor: 2, price: 3450 }
-];
-
-let selectedRoom = null; // single selected room
-
-function showRooms() {
-  const checkin = document.getElementById("checkin").value;
-  const checkout = document.getElementById("checkout").value;
-
-  if (!checkin || !checkout || checkin >= checkout) {
-    alert("Please select valid check-in and check-out dates.");
-    return;
-  }
-
-  selectedRoom = null;
-
-  // Get hotel name from localStorage
-  const hotel = localStorage.getItem("selectedHotel");
-  if (!hotel) {
-    alert("Please select a hotel first.");
-    return;
-  }
-
-  // Load bookedRoomsDict from localStorage
-  let bookedRoomsDict = {};
-  const storedDict = localStorage.getItem("bookedRoomsDict");
-  if (storedDict) {
-    bookedRoomsDict = JSON.parse(storedDict);
-  }
-
-  // Get booked rooms for this hotel or empty array
-  const bookedNumbers = bookedRoomsDict[hotel] || [];
-
-  // Mark rooms booked if in dictionary
-  rooms.forEach(room => {
-    room.booked = bookedNumbers.includes(room.number);
-  });
-
-  // Clear floors content
-  document.getElementById("floor1").innerHTML = '';
-  document.getElementById("floor2").innerHTML = '';
-
-  // Render floors
-  renderFloor(document.getElementById("floor1"), 1);
-  renderFloor(document.getElementById("floor2"), 2);
-}
-
-function renderFloor(container, floorNum) {
-  const floorRooms = rooms.filter(r => r.floor === floorNum);
-  const half = Math.ceil(floorRooms.length / 2);
-  const leftRooms = floorRooms.slice(0, half);
-  const rightRooms = floorRooms.slice(half);
-
-  const maxRows = Math.max(leftRooms.length, rightRooms.length);
-  container.style.gridTemplateRows = `repeat(${maxRows}, auto)`;
-
-  const corridor = document.createElement("div");
-  corridor.className = "hallway";
-  corridor.textContent = "Corridor";
-  corridor.style.gridColumn = "2";
-  corridor.style.gridRow = `1 / span ${maxRows}`;
-  container.appendChild(corridor);
-
-  leftRooms.forEach((room, i) => {
-    const box = createRoomBox(room, floorNum);
-    box.style.gridColumn = "1";
-    box.style.gridRow = `${i + 1}`;
-    container.appendChild(box);
-  });
-
-  rightRooms.forEach((room, i) => {
-    const box = createRoomBox(room, floorNum);
-    box.style.gridColumn = "3";
-    box.style.gridRow = `${i + 1}`;
-    container.appendChild(box);
-  });
-}
-
-function createRoomBox(room, floorNum) {
-  const box = document.createElement("div");
-  const isBooked = room.booked;
-  box.className = `roomBox ${room.type.toLowerCase()} ${isBooked ? 'booked' : 'available'}`;
-
-  box.innerHTML = `
-    <strong>${room.number}</strong>
-    <div>${room.type}</div>
-    <small>${room.features}</small>
-    <div style="margin-top: 6px; color: #ddd; font-size: 0.9em;">
-      ₹${room.price} / night
-    </div>
-  `;
-
-  if (!isBooked) {
-    box.addEventListener("click", () => {
-      if (selectedRoom && selectedRoom.number === room.number) {
-        // Deselect current
-        selectedRoom = null;
-        box.classList.remove("selected");
-      } else {
-        // Deselect previous selected room box if any
-        const prevBox = document.querySelector(".roomBox.selected");
-        if (prevBox) prevBox.classList.remove("selected");
-
-        // Select new room
-        selectedRoom = room;
-        box.classList.add("selected");
+    const offerDetails = {
+      summer_savings: {
+        key: 'summer_savings',
+        title: 'Summer savings',
+        description: 'Save up to 25% on stays booked this week. Enjoy late checkout and welcome refreshments.',
+        room_ids: [102, 207, 115],
+        discount: 0.20,
+        hotel: 'Grand Palace'
+      },
+      family_package: {
+        key: 'family_package',
+        title: 'Family package',
+        description: 'Get free breakfast for kids, room upgrades, and a guided city tour with your reservation.',
+        room_ids: [204, 111, 213],
+        discount: 0.15,
+        hotel: 'Seaside Resort'
+      },
+      off_season: {
+        key: 'off_season',
+        title: 'Off-season escape',
+        description: 'Book now for lower rates and complimentary spa credits at select resort properties.',
+        room_ids: [208, 211, 216],
+        discount: 0.25,
+        hotel: 'Breeze Retreat'
       }
+    };
+
+    fetch('/pricing/prediction')
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(item => {
+          surgeTable[item.date] = item.price_multiplier;
+        });
+        surgeLoaded = true;
+      })
+      .catch(() => {
+        surgeLoaded = true;
+      });
+
+    const rooms = [
+      { number: 101, type: 'Standard', features: ['Wi-Fi','Workspace'], booked: false, floor: 1, price: 1200, image: '/static/homepage.jpg', tagline: 'Quiet comfort for short stays' },
+      { number: 102, type: 'Standard', features: ['A/C','Desk'], booked: false, floor: 1, price: 1300, image: '/static/bluebg.jpg', tagline: 'Bright and airy' },
+      { number: 103, type: 'Standard', features: ['City view','Mini fridge'], booked: false, floor: 1, price: 1250, image: '/static/homepage.jpg', tagline: 'Perfect for quick getaways' },
+      { number: 104, type: 'Deluxe', features: ['Balcony','Smart TV'], booked: false, floor: 1, price: 2000, image: '/static/bluebg.jpg', tagline: 'A calmer, premium experience' },
+      { number: 105, type: 'Deluxe', features: ['King bed','Rain shower'], booked: false, floor: 1, price: 2100, image: '/static/homepage.jpg', tagline: 'Elevated comfort' },
+      { number: 106, type: 'Suite', features: ['Lounge area','Ocean view'], booked: false, floor: 1, price: 3000, image: '/static/bluebg.jpg', tagline: 'Luxury with extra space' },
+      { number: 107, type: 'Suite', features: ['Panoramic view','Butler service'], booked: false, floor: 1, price: 3500, image: '/static/homepage.jpg', tagline: 'Signature suite escape' },
+      { number: 108, type: 'Standard', features: ['Fan','Desk'], booked: false, floor: 1, price: 1350, image: '/static/bluebg.jpg', tagline: 'Simple elegance' },
+      { number: 109, type: 'Standard', features: ['Wi-Fi','Tea station'], booked: false, floor: 1, price: 1250, image: '/static/homepage.jpg', tagline: 'Cozy and convenient' },
+      { number: 110, type: 'Standard', features: ['A/C','Workspace'], booked: false, floor: 1, price: 1400, image: '/static/bluebg.jpg', tagline: 'Ideal for business travel' },
+      { number: 111, type: 'Deluxe', features: ['Terrace','Breakfast setup'], booked: false, floor: 1, price: 2200, image: '/static/homepage.jpg', tagline: 'Relax in style' },
+      { number: 112, type: 'Deluxe', features: ['King bed','Mini bar'], booked: false, floor: 1, price: 2150, image: '/static/bluebg.jpg', tagline: 'A memorable stay' },
+      { number: 113, type: 'Suite', features: ['Dining area','2 baths'], booked: false, floor: 1, price: 3200, image: '/static/homepage.jpg', tagline: 'Family-friendly comfort' },
+      { number: 114, type: 'Suite', features: ['Jacuzzi','Private lounge'], booked: false, floor: 1, price: 3300, image: '/static/bluebg.jpg', tagline: 'Premium retreat' },
+      { number: 115, type: 'Standard', features: ['Desk','Wi-Fi'], booked: false, floor: 1, price: 1450, image: '/static/homepage.jpg', tagline: 'Practical and stylish' },
+      { number: 116, type: 'Deluxe', features: ['Balcony','Smart TV'], booked: false, floor: 1, price: 2250, image: '/static/bluebg.jpg', tagline: 'Contemporary comfort' },
+      { number: 201, type: 'Standard', features: ['A/C','Quiet zone'], booked: false, floor: 2, price: 1250, image: '/static/homepage.jpg', tagline: 'Soft lighting and calm' },
+      { number: 202, type: 'Standard', features: ['Wi-Fi','Sleeping nook'], booked: false, floor: 2, price: 1300, image: '/static/bluebg.jpg', tagline: 'A calm hideaway' },
+      { number: 203, type: 'Standard', features: ['Desk','Tea setup'], booked: false, floor: 2, price: 1350, image: '/static/homepage.jpg', tagline: 'A restful stay' },
+      { number: 204, type: 'Deluxe', features: ['Balcony','Rain shower'], booked: false, floor: 2, price: 2200, image: '/static/bluebg.jpg', tagline: 'Bright and spacious' },
+      { number: 205, type: 'Deluxe', features: ['King bed','TV'], booked: false, floor: 2, price: 2150, image: '/static/homepage.jpg', tagline: 'A polished escape' },
+      { number: 206, type: 'Suite', features: ['Lounge','Ocean view'], booked: false, floor: 2, price: 3200, image: '/static/bluebg.jpg', tagline: 'Perfect for indulgence' },
+      { number: 207, type: 'Suite', features: ['2 beds','Dining nook'], booked: false, floor: 2, price: 3300, image: '/static/homepage.jpg', tagline: 'Roomier for groups' },
+      { number: 208, type: 'Standard', features: ['Fan','Desk'], booked: false, floor: 2, price: 1260, image: '/static/bluebg.jpg', tagline: 'Comfort without compromise' },
+      { number: 209, type: 'Standard', features: ['Wi-Fi','Workspace'], booked: false, floor: 2, price: 1310, image: '/static/homepage.jpg', tagline: 'Efficient and fresh' },
+      { number: 210, type: 'Deluxe', features: ['Balcony','Mini bar'], booked: false, floor: 2, price: 2250, image: '/static/bluebg.jpg', tagline: 'Elegant and relaxing' },
+      { number: 211, type: 'Suite', features: ['Ocean view','Lounge'], booked: false, floor: 2, price: 3400, image: '/static/homepage.jpg', tagline: 'Truly luxurious' },
+      { number: 212, type: 'Standard', features: ['Desk','A/C'], booked: false, floor: 2, price: 1360, image: '/static/bluebg.jpg', tagline: 'Smart and inviting' },
+      { number: 213, type: 'Deluxe', features: ['TV','Rain shower'], booked: false, floor: 2, price: 2180, image: '/static/homepage.jpg', tagline: 'Ideal for a longer stay' },
+      { number: 214, type: 'Standard', features: ['Wi-Fi','Tea station'], booked: false, floor: 2, price: 1290, image: '/static/bluebg.jpg', tagline: 'Warm and welcoming' },
+      { number: 215, type: 'Suite', features: ['Lounge','Jacuzzi'], booked: false, floor: 2, price: 3250, image: '/static/homepage.jpg', tagline: 'Treat yourself' },
+      { number: 216, type: 'Suite', features: ['Mini-fridge','Ocean view'], booked: false, floor: 2, price: 3450, image: '/static/bluebg.jpg', tagline: 'The finest view in the hotel' }
+    ];
+
+    function setFilter(type) {
+      activeFilter = type;
+      document.querySelectorAll('.chip-btn').forEach(btn => btn.classList.toggle('active', btn.textContent.includes(type)));
+      showRooms();
+    }
+
+    function showRooms() {
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+
+      if (!checkin || !checkout || checkin >= checkout) {
+        alert('Please select valid check-in and check-out dates.');
+        return;
+      }
+
+      let hotel = localStorage.getItem('selectedHotel');
+      if (!hotel) {
+        const offerHotel = localStorage.getItem('selectedOfferHotel');
+        if (offerHotel) {
+          hotel = offerHotel;
+          localStorage.setItem('selectedHotel', offerHotel);
+        }
+      }
+      if (!hotel) {
+        alert('Please select a hotel first.');
+        return;
+      }
+
+      let bookedRoomsDict = {};
+      const storedDict = localStorage.getItem('bookedRoomsDict');
+      if (storedDict) {
+        bookedRoomsDict = JSON.parse(storedDict);
+      }
+
+      const bookedNumbers = bookedRoomsDict[hotel] || [];
+      rooms.forEach(room => {
+        room.booked = bookedNumbers.includes(room.number);
+      });
+
+      const offerRoomIds = activeOffer ? activeOffer.room_ids : null;
+      const visibleRooms = rooms.filter(room => {
+        const matchesType = activeFilter === 'All' || room.type === activeFilter;
+        const matchesOffer = !offerRoomIds || offerRoomIds.includes(room.number);
+        return matchesType && matchesOffer;
+      });
+
+      const grid = document.getElementById('roomGrid');
+      grid.innerHTML = '';
+
+      visibleRooms.forEach(room => {
+        const card = document.createElement('article');
+        card.className = `room-card${selectedRoom && selectedRoom.number === room.number ? ' selected' : ''}${room.booked ? ' booked' : ''}`;
+        card.innerHTML = `
+          <div class="room-image" style="background-image: url('${room.image}')">
+            <span class="type-pill">${room.type}</span>
+            <strong>Room ${room.number}</strong>
+          </div>
+          <div class="room-body">
+            <div class="room-title-row">
+              <h3>${room.tagline}</h3>
+              <span class="room-price">₹${room.price}</span>
+            </div>
+            <div class="room-meta">Floor ${room.floor} • ${room.booked ? 'Booked' : 'Ready to book'}</div>
+            <div class="room-features">
+              ${room.features.map(feature => `<span>${feature}</span>`).join('')}
+            </div>
+            <div class="room-actions">
+              <span>${room.booked ? 'Unavailable' : 'Flexible booking'}</span>
+              <button class="select-btn" ${room.booked ? 'disabled' : ''} onclick="pickRoom(${room.number})">${room.booked ? 'Booked' : 'Select'}</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      updateSelectionSummary();
+    }
+
+    function pickRoom(number) {
+      const room = rooms.find(item => item.number === number);
+      if (!room || room.booked) return;
+
+      if (selectedRoom && selectedRoom.number === room.number) {
+        selectedRoom = null;
+      } else {
+        selectedRoom = room;
+      }
+
+      showRooms();
+    }
+
+    function updateSelectionSummary() {
+      const label = document.getElementById('selectionLabel');
+      const subtext = document.getElementById('selectionSubtext');
+      if (!selectedRoom) {
+        label.textContent = 'No room selected yet';
+        subtext.textContent = activeOffer
+          ? `Offer selected: ${activeOffer.title}. Pick a room included in the deal.`
+          : 'Choose a room to continue your booking.';
+        return;
+      }
+      label.textContent = `Selected: Room ${selectedRoom.number} · ${selectedRoom.type}`;
+      subtext.textContent = `${selectedRoom.features.join(' • ')} • ₹${selectedRoom.price} / night${activeOffer ? ` • ${activeOffer.title} applied` : ''}`;
+    }
+
+    function confirmRoom() {
+      if (!surgeLoaded) {
+        alert('Loading surge pricing... please wait a moment and try again.');
+        return;
+      }
+
+      if (!selectedRoom) {
+        alert('Please select a room.');
+        return;
+      }
+
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+      const checkinDate = new Date(checkin);
+      const checkoutDate = new Date(checkout);
+      const numNights = (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24);
+
+      const roomString = `${selectedRoom.number}`;
+      let multiplier = 1.0;
+      const checkinStr = new Date(checkin).toISOString().split('T')[0];
+      if (surgeTable[checkinStr]) multiplier = surgeTable[checkinStr];
+
+      const base = selectedRoom.price * numNights;
+      const surged = base * multiplier;
+      const totalPrice = surged + 0.18 * surged;
+
+      const surgeMsg = document.getElementById('surge-warning');
+      if (multiplier > 1.0) {
+        surgeMsg.style.display = 'block';
+        surgeMsg.textContent = `⚠ High-demand date! Surge pricing x${multiplier} applied.`;
+      } else {
+        surgeMsg.style.display = 'none';
+      }
+
+      localStorage.setItem('selectedRooms', roomString);
+      localStorage.setItem('checkinDate', checkin);
+      localStorage.setItem('checkoutDate', checkout);
+      localStorage.setItem('roomPrice', selectedRoom.price);
+      localStorage.setItem('price', totalPrice);
+      localStorage.setItem('selectedRoom', roomString);
+      if (activeOffer) {
+        localStorage.setItem('selectedOfferKey', activeOffer.key);
+        localStorage.setItem('selectedOfferTitle', activeOffer.title);
+        localStorage.setItem('selectedOfferDiscount', activeOffer.discount);
+      } else {
+        localStorage.removeItem('selectedOfferKey');
+        localStorage.removeItem('selectedOfferTitle');
+        localStorage.removeItem('selectedOfferDiscount');
+      }
+
+      if (multiplier > 1.0) {
+        document.getElementById('proceedBtn').style.display = 'inline-block';
+      } else {
+        window.location.href = 'checkout.html';
+      }
+    }
+
+    function displayActiveOffer() {
+      const banner = document.getElementById('activeOfferCard');
+      if (!activeOffer) {
+        banner.style.display = 'none';
+        return;
+      }
+      document.getElementById('activeOfferTitle').textContent = `${activeOffer.title} • ${Math.round(activeOffer.discount * 100)}% off`;
+      document.getElementById('activeOfferDescription').textContent = activeOffer.description;
+      banner.style.display = 'block';
+    }
+
+    function clearOffer() {
+      activeOffer = null;
+      localStorage.removeItem('selectedOfferKey');
+      localStorage.removeItem('selectedOfferTitle');
+      localStorage.removeItem('selectedOfferDiscount');
+      localStorage.removeItem('offerRoomIds');
+      displayActiveOffer();
+      showRooms();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const storedOfferKey = localStorage.getItem('selectedOfferKey');
+      if (storedOfferKey && offerDetails[storedOfferKey]) {
+        activeOffer = offerDetails[storedOfferKey];
+        if (!localStorage.getItem('selectedHotel')) {
+          localStorage.setItem('selectedHotel', activeOffer.hotel);
+        }
+        if (!localStorage.getItem('selectedOfferHotel')) {
+          localStorage.setItem('selectedOfferHotel', activeOffer.hotel);
+        }
+      }
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      document.getElementById('checkin').value = today.toISOString().split('T')[0];
+      document.getElementById('checkout').value = tomorrow.toISOString().split('T')[0];
+      displayActiveOffer();
+      showRooms();
     });
-  } else {
-    // Grey out booked rooms, disable pointer events
-    box.style.opacity = "0.5";
-    box.style.pointerEvents = "none";
-  }
 
-  return box;
-}
+    function goToCheckout() {
+      window.location.href = 'checkout.html';
+    }
 
-function switchFloor(num) {
-  document.querySelectorAll('.floor').forEach(f => f.classList.remove('active'));
-  document.getElementById(`floor${num}`).classList.add('active');
-
-  document.querySelectorAll('.floor-tabs button').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.floor-tabs button')[num - 1].classList.add('active');
-}
-
-function confirmRoom() {
-    if (!surgeLoaded) {
-    alert("Loading surge pricing... please wait 1 second and try again.");
-    return;
-  }
-
-  if (!selectedRoom) {
-    alert("Please select a room.");
-    return;
-  }
-
-  const checkin = document.getElementById("checkin").value;
-  const checkout = document.getElementById("checkout").value;
-
-  const checkinDate = new Date(checkin);
-  const checkoutDate = new Date(checkout);
-  const timeDiff = checkoutDate - checkinDate;
-  const numNights = timeDiff / (1000 * 60 * 60 * 24);
-
-  const roomString = `${selectedRoom.number}`;
-  let multiplier = 1.0;
-const checkinStr = new Date(checkin).toISOString().split("T")[0];
-if (surgeTable[checkinStr]) multiplier = surgeTable[checkinStr];
-
-const base = selectedRoom.price * numNights;
-const surged = base * multiplier;
-const totalPrice = surged + 0.18 * surged;
-// 🔥 Show UI alert instead of popup
-const surgeMsg = document.getElementById("surge-warning");
-if (multiplier > 1.0) {
-  surgeMsg.style.display = "block";
-  surgeMsg.textContent = `⚠ High-demand date! Surge pricing x${multiplier} applied.`;
-} else {
-  surgeMsg.style.display = "none";
-}
-
-
-
-
-  localStorage.setItem("selectedRooms", roomString);
-  localStorage.setItem("checkinDate", checkin);
-  localStorage.setItem("checkoutDate", checkout);
-  localStorage.setItem("price", totalPrice);
-  localStorage.setItem("selectedRoom", roomString);
-  
-  if (multiplier > 1.0) {
-  document.getElementById("proceedBtn").style.display = "block";
-} else {
-  window.location.href = "checkout.html";
-}
-
-
-  //window.location.href = "checkout.html";
-}
-
-function goToCheckout() {
-  window.location.href = "checkout.html";
-}
-</script>
-
-
-</body>
-</html>
+  </script>

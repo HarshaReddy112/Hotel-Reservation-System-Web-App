@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment - Hotel Booking</title>
+  <style>
+    :root {
+      --bg: #f7f3ef;
+      --panel: #fffdfa;
+      --text: #222222;
+      --muted: #6f7282;
+      --accent: #ff5a5f;
+      --accent-2: #ff385c;
+      --border: #ece5de;
+      --shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #fff8f0 0%, #fefcf8 100%);
+    }
+
+    .payment-shell {
+      width: min(780px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .payment-header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .summary-list, .payment-form, .method-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .summary-card, .payment-card {
+      background: #fff5ee;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .summary-item, .payment-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(15,23,42,0.06);
+    }
+
+    .summary-item:last-child, .payment-row:last-child { border-bottom: none; }
+
+    .summary-item strong { color: #ff5a5f; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,90,95,0.08); color: #ff5a5f; font-weight: 600; }
+
+    .method-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .method-card {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      display: grid;
+      gap: 10px;
+      align-items: flex-start;
+      background: #fff;
+    }
+
+    .method-card:hover { transform: translateY(-2px); }
+    .method-card.active { border-color: #ff5a5f; box-shadow: 0 0 0 2px rgba(255,90,95,0.12); }
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 0.95rem;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 6px;
+      box-shadow: 0 8px 18px rgba(255,90,95,0.16);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .success-message {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(61, 207, 142, 0.12);
+      border: 1px solid rgba(61, 207, 142, 0.22);
+      color: #2f7a4b;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-shell">
+    <div class="payment-header">
+      <div>
+        <h1>Payment details</h1>
+        <p class="note">Confirm your payment method and complete your booking.</p>
+      </div>
+      <div class="badge">Secure checkout</div>
+    </div>
+
+    <section class="summary-card">
+      <div class="summary-item"><strong>Hotel</strong><span id="hotel">...</span></div>
+      <div class="summary-item"><strong>Room</strong><span id="room">...</span></div>
+      <div class="summary-item"><strong>Check-in</strong><span id="checkin">...</span></div>
+      <div class="summary-item"><strong>Check-out</strong><span id="checkout">...</span></div>
+      <div class="summary-item"><strong>Offer</strong><span id="offerName">None</span></div>
+      <div class="summary-item"><strong>Total amount</strong><span id="price">...</span></div>
+    </section>
+
+    <section class="payment-form">
+      <div>
+        <p class="note">Choose your payment method.</p>
+      </div>
+      <div class="method-grid">
+        <div class="method-card" id="method-card-card" onclick="selectMethod('card')">
+          <strong>Credit / Debit Card</strong>
+          <p>Pay securely with your card.</p>
+        </div>
+        <div class="method-card" id="method-card-upi" onclick="selectMethod('upi')">
+          <strong>UPI</strong>
+          <p>Fast UPI payment through your preferred app.</p>
+        </div>
+        <div class="method-card" id="method-card-netbanking" onclick="selectMethod('netbanking')">
+          <strong>Net Banking</strong>
+          <p>Use your bank account for payment.</p>
+        </div>
+      </div>
+
+      <div id="paymentInputs"></div>
+      <button onclick="submitPayment()">Pay now</button>
+      <p class="note">After payment, your booking will be confirmed and you will return to the catalog.</p>
+    </section>
+
+    <div class="success-message" id="paymentSuccess">
+      <h2>Booking successful!</h2>
+      <p>Your payment has been processed and your room is booked. Redirecting back to the catalog...</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedMethod = 'card';
+
+    function formatCurrency(value) {
+      return `₹${Number(value).toFixed(2)}`;
+    }
+
+    function readCheckoutValue(key, fallbackKey) {
+      return localStorage.getItem(key) || (fallbackKey ? localStorage.getItem(fallbackKey) : null);
+    }
+
+    function parseStoredPrice() {
+      const priceRaw = localStorage.getItem('price');
+      const directPrice = priceRaw ? parseFloat(priceRaw) : NaN;
+      if (Number.isFinite(directPrice)) return directPrice;
+
+      const roomPrice = parseFloat(localStorage.getItem('roomPrice'));
+      const checkin = localStorage.getItem('checkinDate');
+      const checkout = localStorage.getItem('checkoutDate');
+      if (!roomPrice || !checkin || !checkout) return NaN;
+
+      const checkinDate = new Date(checkin);
+      const checkoutDate = new Date(checkout);
+      const numNights = Math.max(1, (checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+      if (!Number.isFinite(numNights) || numNights <= 0) return NaN;
+
+      const baseTotal = roomPrice * numNights;
+      const taxAmount = baseTotal * 0.18;
+      const rebuilt = baseTotal + taxAmount;
+      localStorage.setItem('price', rebuilt.toFixed(2));
+      return rebuilt;
+    }
+
+    function updateSummary() {
+      const hotel = readCheckoutValue('selectedHotel', 'selectedOfferHotel') || 'N/A';
+      const room = readCheckoutValue('selectedRoom', 'selectedRooms') || 'N/A';
+      const checkin = readCheckoutValue('checkinDate');
+      const checkout = readCheckoutValue('checkoutDate');
+      const offer = localStorage.getItem('selectedOfferTitle') || 'None';
+      const price = parseStoredPrice();
+
+      document.getElementById('hotel').textContent = hotel;
+      document.getElementById('room').textContent = room;
+      document.getElementById('checkin').textContent = checkin || 'N/A';
+      document.getElementById('checkout').textContent = checkout || 'N/A';
+      document.getElementById('offerName').textContent = offer;
+      document.getElementById('price').textContent = Number.isFinite(price) ? formatCurrency(price) : 'N/A';
+    }
+
+    function selectMethod(method) {
+      selectedMethod = method;
+      document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
+      document.getElementById(`method-card-${method}`).classList.add('active');
+      renderPaymentFields();
+    }
+
+    function renderPaymentFields() {
+      const container = document.getElementById('paymentInputs');
+      container.innerHTML = '';
+
+      if (selectedMethod === 'card') {
+        container.innerHTML = `
+          <label>Cardholder name<input type="text" id="cardName" placeholder="Full name" /></label>
+          <label>Card number<input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" /></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr; gap:12px;">
+            <label>Expiry<input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" /></label>
+            <label>CVV<input type="text" id="cardCVV" placeholder="123" maxlength="4" /></label>
+          </div>
+        `;
+      } else if (selectedMethod === 'upi') {
+        container.innerHTML = `
+          <label>UPI ID<input type="text" id="upiId" placeholder="yourid@bank" /></label>
+        `;
+      } else {
+        container.innerHTML = `
+          <label>Bank name<select id="bankName">
+            <option value="">Select bank</option>
+            <option value="HDFC">HDFC</option>
+            <option value="ICICI">ICICI</option>
+            <option value="SBI">SBI</option>
+            <option value="Axis">Axis</option>
+          </select></label>
+          <label>Account number<input type="text" id="bankAccount" placeholder="1234567890" /></label>
+        `;
+      }
+    }
+
+    function submitPayment() {
+      const hotel = readCheckoutValue('selectedHotel', 'selectedOfferHotel') || 'Unknown Hotel';
+      const room = readCheckoutValue('selectedRoom', 'selectedRooms') || 'Standard Room';
+      const checkin = readCheckoutValue('checkinDate') || new Date().toISOString().split('T')[0];
+      const checkout = readCheckoutValue('checkoutDate') || new Date(Date.now() + 86400000).toISOString().split('T')[0];
+      const price = parseStoredPrice();
+      let userID = localStorage.getItem('userID');
+
+      if (!userID) {
+        userID = '1';
+      }
+
+      const missingFields = [];
+      if (!readCheckoutValue('selectedHotel', 'selectedOfferHotel')) missingFields.push('hotel');
+      if (!readCheckoutValue('selectedRoom', 'selectedRooms')) missingFields.push('room');
+      if (!readCheckoutValue('checkinDate')) missingFields.push('check-in');
+      if (!readCheckoutValue('checkoutDate')) missingFields.push('check-out');
+      if (!Number.isFinite(price)) missingFields.push('price');
+
+      if (missingFields.length) {
+        console.warn('Payment proceeding with fallback values for:', missingFields.join(', '));
+      }
+
+      let valid = true;
+      if (selectedMethod === 'card') {
+        const name = document.getElementById('cardName').value.trim();
+        const number = document.getElementById('cardNumber').value.replace(/\s+/g, '');
+        const expiry = document.getElementById('cardExpiry').value.trim();
+        const cvv = document.getElementById('cardCVV').value.trim();
+        valid = name && number.length >= 12 && expiry && cvv.length >= 3;
+      } else if (selectedMethod === 'upi') {
+        const upiId = document.getElementById('upiId').value.trim();
+        valid = upiId.includes('@');
+      } else {
+        const bank = document.getElementById('bankName').value;
+        const account = document.getElementById('bankAccount').value.trim();
+        valid = bank && account.length >= 8;
+      }
+
+      if (!valid) {
+        alert('Please enter valid payment details.');
+        return;
+      }
+
+      const bookingData = {
+        hotel: hotel,
+        room_type: room,
+        check_in: checkin,
+        check_out: checkout,
+        price: Number.isFinite(price) ? Number(price.toFixed(2)) : 0,
+        user_id: userID
+      };
+
+      fetch('/reserve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.querySelector('.payment-form').style.display = 'none';
+        const success = document.getElementById('paymentSuccess');
+        success.style.display = 'block';
+        setTimeout(() => {
+          localStorage.clear();
+          window.location.href = '/catalog';
+        }, 2800);
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Payment failed. Please try again.');
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectMethod('card');
+      updateSummary();
+    });
+  </script>
+</body>
+</html>
